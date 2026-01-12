@@ -1,0 +1,42 @@
+services:
+  redis:
+    image: redis:7-alpine
+    # No port mapping needed - specs connect via internal Docker network
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
+
+  specs:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    depends_on:
+      redis:
+        condition: service_healthy
+    environment:
+      - REDIS_URL=redis://redis:6379
+    volumes:
+      - .:/app
+      - bundle_cache:/usr/local/bundle
+    command: bundle exec rspec
+
+  # Service for running specific gemfile configurations (for Appraisal)
+  specs-appraisal:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    depends_on:
+      redis:
+        condition: service_healthy
+    environment:
+      - REDIS_URL=redis://redis:6379
+      - BUNDLE_GEMFILE=${BUNDLE_GEMFILE:-Gemfile}
+    volumes:
+      - .:/app
+      - bundle_cache:/usr/local/bundle
+    command: sh -c "bundle install && bundle exec rspec"
+
+volumes:
+  bundle_cache:
