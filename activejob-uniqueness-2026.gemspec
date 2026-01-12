@@ -5,20 +5,20 @@ $LOAD_PATH.unshift(lib) unless $LOAD_PATH.include?(lib)
 require 'active_job/uniqueness/version'
 
 Gem::Specification.new do |spec|
-  spec.name          = 'activejob-uniqueness'
+  spec.name          = 'activejob-uniqueness-2026'
   spec.version       = ActiveJob::Uniqueness::VERSION
-  spec.authors       = ['Rustam Sharshenov']
-  spec.email         = ['rustam@sharshenov.com']
+  spec.authors       = ['Rustam Sharshenov', 'Nord Investments']
+  spec.email         = ['nse@norminvest.com']
 
   spec.summary       = 'Ensure uniqueness of your ActiveJob jobs'
-  spec.description   = 'Ensure uniqueness of your ActiveJob jobs'
-  spec.homepage      = 'https://github.com/veeqo/activejob-uniqueness'
+  spec.description   = 'Ensure uniqueness of your ActiveJob jobs. Maintained fork of veeqo/activejob-uniqueness.'
+  spec.homepage      = 'https://github.com/nordinvestments/activejob-uniqueness'
   spec.license       = 'MIT'
 
   if spec.respond_to?(:metadata)
     spec.metadata['homepage_uri'] = spec.homepage
     spec.metadata['source_code_uri'] = spec.homepage
-    spec.metadata['changelog_uri'] = 'https://github.com/veeqo/activejob-uniqueness/blob/main/CHANGELOG.md'
+    spec.metadata['changelog_uri'] = 'https://github.com/nordinvestments/activejob-uniqueness/blob/main/CHANGELOG.md'
     spec.metadata['rubygems_mfa_required'] = 'true'
   end
 

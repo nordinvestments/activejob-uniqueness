@@ -1,5 +1,10 @@
 # Job uniqueness for ActiveJob
-[![Build Status](https://github.com/veeqo/activejob-uniqueness/actions/workflows/main.yml/badge.svg?branch=main)](https://github.com/veeqo/activejob-uniqueness/actions/workflows/main.yml) [![Gem Version](https://badge.fury.io/rb/activejob-uniqueness.svg)](https://badge.fury.io/rb/activejob-uniqueness)
+
+> **Maintained fork of [veeqo/activejob-uniqueness](https://github.com/veeqo/activejob-uniqueness)**
+>
+> This gem is published as `activejob-uniqueness-2026` on RubyGems. The API is fully compatible with the original gem — just update your Gemfile.
+
+[![Build Status](https://github.com/nordinvestments/activejob-uniqueness/actions/workflows/main.yml/badge.svg?branch=main)](https://github.com/nordinvestments/activejob-uniqueness/actions/workflows/main.yml) [![Gem Version](https://badge.fury.io/rb/activejob-uniqueness-2026.svg)](https://badge.fury.io/rb/activejob-uniqueness-2026)
 
 The gem allows to protect job uniqueness with next strategies:
 
@@ -21,18 +26,32 @@ Inspired by [SidekiqUniqueJobs](https://github.com/mhenrixon/sidekiq-unique-jobs
 
 ## Installation
 
-Add the `activejob-uniqueness` gem to your Gemfile.
+Add the `activejob-uniqueness-2026` gem to your Gemfile.
 
 ```ruby
-gem 'activejob-uniqueness'
+gem 'activejob-uniqueness-2026'
 ```
 
 If you want jobs unlocking for Sidekiq Web UI, require the patch explicitly. [**Queues cleanup becomes slower!**](#sidekiq-api-support)
 ```ruby
-gem 'activejob-uniqueness', require: 'active_job/uniqueness/sidekiq_patch'
+gem 'activejob-uniqueness-2026', require: 'active_job/uniqueness/sidekiq_patch'
 ```
 
 And run `bundle install` command.
+
+### Migrating from `activejob-uniqueness`
+
+If you're switching from the original gem, simply replace in your Gemfile:
+
+```ruby
+# Before
+gem 'activejob-uniqueness'
+
+# After
+gem 'activejob-uniqueness-2026'
+```
+
+No code changes required — the `ActiveJob::Uniqueness` module namespace is unchanged.
 
 ## Configuration
 
@@ -207,22 +226,29 @@ rake
 ## Sidekiq API support
 
 ActiveJob::Uniqueness supports Sidekiq API to unset job locks on queues cleanup (e.g. via Sidekiq Web UI). Starting Sidekiq 5.1 job death also triggers locks cleanup.
-Take into account that **[big queues cleanup becomes much slower](https://github.com/veeqo/activejob-uniqueness/issues/16)** because each job is being unlocked individually. In order to activate Sidekiq API patch require it explicitly in your Gemfile:
+Take into account that **[big queues cleanup becomes much slower](https://github.com/nordinvestments/activejob-uniqueness/issues/16)** because each job is being unlocked individually. In order to activate Sidekiq API patch require it explicitly in your Gemfile:
 
 ```ruby
-gem 'activejob-uniqueness', require: 'active_job/uniqueness/sidekiq_patch'
+gem 'activejob-uniqueness-2026', require: 'active_job/uniqueness/sidekiq_patch'
 ```
+
+## Why this fork?
+
+The [original gem](https://github.com/veeqo/activejob-uniqueness) by Veeqo is excellent, but maintenance has slowed. This fork aims to:
+
+- Keep up with new Rails and Ruby versions
+- Merge useful PRs from the community
+- Provide timely security updates
+- Maintain backwards compatibility
+
+We're grateful to the original authors and contributors. This fork preserves the MIT license and full attribution.
 
 ## Contributing
 
-Bug reports and pull requests are welcome on GitHub at https://github.com/veeqo/activejob-uniqueness.
+Bug reports and pull requests are welcome on GitHub at https://github.com/nordinvestments/activejob-uniqueness.
 
 ## License
 
 The gem is available as open source under the terms of the [MIT License](https://opensource.org/licenses/MIT).
 
-## About [Veeqo](https://www.veeqo.com)
-
-At Veeqo, our team of Engineers is on a mission to create a world-class Inventory and Shipping platform, built to the highest standards in best coding practices. We are a growing team, looking for other passionate developers to [join us](https://veeqo-ltd.breezy.hr/) on our journey. If you're looking for a career working for one of the most exciting tech companies in ecommerce, we want to hear from you.
-
-[Veeqo developers blog](https://devs.veeqo.com)
+Originally created by [Veeqo](https://www.veeqo.com). Maintained by [Nord Investments](https://github.com/nordinvestments).
