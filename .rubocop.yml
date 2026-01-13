@@ -11,6 +11,10 @@ AllCops:
     - activejob-uniqueness.gemspec
     - activejob-unique.gemspec
 
+Naming/FileName:
+  Exclude:
+    - lib/activejob-unique.rb
+
 RSpec/PredicateMatcher:
   Enabled: false
 
