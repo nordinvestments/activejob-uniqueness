@@ -3,8 +3,17 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
-## [Unreleased](https://github.com/veeqo/activejob-uniqueness/compare/v0.4.0...HEAD)
+## [Unreleased](https://github.com/nordinvestments/activejob-uniqueness/compare/v0.5.0...HEAD)
 
+## [0.5.0](https://github.com/nordinvestments/activejob-uniqueness/compare/v0.4.0...v0.5.0) - 2026-01-12
+
+### Changed
+- Fork published as `activejob-uniqueness-2026` gem by [@nordinvestments](https://github.com/nordinvestments)
+- Updated gem metadata to point to fork repository
+
+---
+
+*Versions below are from the original [veeqo/activejob-uniqueness](https://github.com/veeqo/activejob-uniqueness) repository.*
 
 ## [0.4.0](https://github.com/veeqo/activejob-uniqueness/compare/v0.3.2...v0.4.0) - 2024-12-07
 

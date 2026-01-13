@@ -2,6 +2,11 @@
 
 source "https://rubygems.org"
 
-gem "sidekiq", "~> 7.0"
+# Sidekiq 7.3.9+ moved ActiveJob::QueueAdapters::SidekiqAdapter::JobWrapper to
+# Sidekiq::ActiveJob::Wrapper, breaking compatibility. While our sidekiq_patch.rb
+# handles both class names, we pin to < 7.3.9 for stable CI testing.
+# See: https://github.com/sidekiq/sidekiq/issues/6352
+gem "sidekiq", ">= 7.0", "< 7.3.9"
+gem "activejob", "~> 7.1"
 
 gemspec path: "../"

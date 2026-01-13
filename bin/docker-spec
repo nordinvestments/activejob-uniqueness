@@ -1,0 +1,19 @@
+#!/usr/bin/env bash
+set -e
+
+# Script to run specs using Docker
+# Usage:
+#   ./bin/docker-spec                    # Run all specs
+#   ./bin/docker-spec spec/path/to_spec.rb  # Run specific spec file
+#   BUNDLE_GEMFILE=gemfiles/activejob_7.1.x.gemfile ./bin/docker-spec  # Run with specific gemfile
+
+cd "$(dirname "$0")/.."
+
+# Build and run specs
+if [ -n "$BUNDLE_GEMFILE" ]; then
+  echo "Running specs with gemfile: $BUNDLE_GEMFILE"
+  docker compose run --rm -e BUNDLE_GEMFILE="$BUNDLE_GEMFILE" specs-appraisal bundle exec rspec "$@"
+else
+  echo "Running specs with default Gemfile"
+  docker compose run --rm specs bundle exec rspec "$@"
+fi

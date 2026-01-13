@@ -3,5 +3,6 @@
 source "https://rubygems.org"
 
 gem "sidekiq", "~> 6.4"
+gem "activejob", "~> 7.1"
 
 gemspec path: "../"

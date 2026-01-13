@@ -1,0 +1,28 @@
+# Git
+.git
+.gitignore
+
+# CI/CD
+.github
+
+# IDE
+.idea
+.vscode
+*.swp
+*.swo
+
+# Ruby/Bundler
+.bundle
+vendor/bundle
+coverage/
+pkg/
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+
+# Temp files
+tmp/
