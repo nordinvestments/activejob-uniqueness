@@ -34,8 +34,16 @@ jobs:
         gemfile:
           - gemfiles/activejob_7.1.x.gemfile
           - gemfiles/activejob_7.2.x.gemfile
+          - gemfiles/activejob_8.1.x.gemfile
           - gemfiles/sidekiq_6.x.gemfile
           - gemfiles/sidekiq_7.x.gemfile
+          - gemfiles/sidekiq_8.x.gemfile
+        exclude:
+          # ActiveJob 8.1 and Sidekiq 8 require Ruby >= 3.2
+          - ruby: '3.1'
+            gemfile: gemfiles/activejob_8.1.x.gemfile
+          - ruby: '3.1'
+            gemfile: gemfiles/sidekiq_8.x.gemfile
 
     steps:
     - name: Checkout code
