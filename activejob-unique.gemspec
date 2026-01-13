@@ -7,7 +7,7 @@ require 'active_job/uniqueness/version'
 Gem::Specification.new do |spec|
   spec.name          = 'activejob-unique'
   spec.version       = ActiveJob::Uniqueness::VERSION
-  spec.authors       = ['Rustam Sharshenov', 'Nicolai Seerup', 'Yaroslav Kurbatov']
+  spec.authors       = ['Rustam Sharshenov', 'Nicolai Seerup', 'Iaroslav Kurbatov']
   spec.email         = ['nse@norminvest.com']
 
   spec.summary       = 'Ensure uniqueness of your ActiveJob jobs'

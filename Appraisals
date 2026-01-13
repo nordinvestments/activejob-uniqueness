@@ -51,7 +51,9 @@ appraise 'sidekiq-6.x' do
 end
 
 appraise 'sidekiq-7.x' do
-  gem 'sidekiq', '< 7.3.9'
+  # Sidekiq 7.3.9+ renamed ActiveJob::QueueAdapters::SidekiqAdapter::JobWrapper to
+  # Sidekiq::ActiveJob::Wrapper. Our sidekiq_patch.rb handles both class names.
+  gem 'sidekiq', '~> 7.3'
 end
 
 appraise 'sidekiq-8.x' do
