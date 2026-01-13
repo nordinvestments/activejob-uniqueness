@@ -4,10 +4,10 @@
 RUBY_VERSION ?= 3.3
 
 # Ruby versions to test (matching CI matrix)
-RUBY_VERSIONS := 3.1 3.2 3.3 3.4
+RUBY_VERSIONS := 3.1 3.2 3.3 3.4 4.0
 
 # Gemfiles to test (matching CI matrix)
-GEMFILES := gemfiles/activejob_7.1.x.gemfile gemfiles/activejob_7.2.x.gemfile gemfiles/sidekiq_6.x.gemfile gemfiles/sidekiq_7.x.gemfile
+GEMFILES := gemfiles/activejob_7.1.x.gemfile gemfiles/activejob_7.2.x.gemfile gemfiles/activejob_8.1.x.gemfile gemfiles/sidekiq_6.x.gemfile gemfiles/sidekiq_7.x.gemfile gemfiles/sidekiq_8.x.gemfile
 
 # Build the Docker image for a specific Ruby version
 # Usage: make build RUBY_VERSION=3.3
@@ -55,11 +55,17 @@ spec-all: up
 	@echo "Running specs with ActiveJob 7.2.x..."
 	docker compose run --rm -e BUNDLE_GEMFILE=gemfiles/activejob_7.2.x.gemfile specs-appraisal || true
 	@echo ""
+	@echo "Running specs with ActiveJob 8.1.x..."
+	docker compose run --rm -e BUNDLE_GEMFILE=gemfiles/activejob_8.1.x.gemfile specs-appraisal || true
+	@echo ""
 	@echo "Running specs with Sidekiq 6.x..."
 	docker compose run --rm -e BUNDLE_GEMFILE=gemfiles/sidekiq_6.x.gemfile specs-appraisal || true
 	@echo ""
 	@echo "Running specs with Sidekiq 7.x..."
 	docker compose run --rm -e BUNDLE_GEMFILE=gemfiles/sidekiq_7.x.gemfile specs-appraisal || true
+	@echo ""
+	@echo "Running specs with Sidekiq 8.x..."
+	docker compose run --rm -e BUNDLE_GEMFILE=gemfiles/sidekiq_8.x.gemfile specs-appraisal || true
 
 # Run the full CI matrix: all Ruby versions × all gemfiles
 # This mirrors what GitHub Actions runs
@@ -68,12 +74,65 @@ spec-matrix: up build-all
 	@echo "Running full CI matrix locally"
 	@echo "=============================================="
 	@failed=0; \
+	skipped=0; \
+	failed_combinations=""; \
 	for ruby in $(RUBY_VERSIONS); do \
 		for gemfile in $(GEMFILES); do \
+			skip=0; \
+			if [ "$$ruby" = "3.1" ] && [ "$$gemfile" = "gemfiles/activejob_8.1.x.gemfile" ]; then \
+				skip=1; \
+			fi; \
+			if [ "$$ruby" = "3.1" ] && [ "$$gemfile" = "gemfiles/sidekiq_8.x.gemfile" ]; then \
+				skip=1; \
+			fi; \
+			if [ $$skip -eq 1 ]; then \
+				echo ""; \
+				echo "----------------------------------------------"; \
+				echo "Ruby $$ruby + $$gemfile [SKIPPED - requires Ruby >= 3.2]"; \
+				echo "----------------------------------------------"; \
+				skipped=$$((skipped + 1)); \
+				continue; \
+			fi; \
 			echo ""; \
 			echo "----------------------------------------------"; \
 			echo "Ruby $$ruby + $$gemfile"; \
 			echo "----------------------------------------------"; \
+			if ! docker run --rm \
+				--network activejob-uniqueness_default \
+				-e REDIS_URL=redis://redis:6379 \
+				-e BUNDLE_GEMFILE=$$gemfile \
+				-v $(PWD):/app \
+				-w /app \
+				activejob-uniqueness:ruby-$$ruby \
+				sh -c "bundle install --quiet && bundle exec rake"; then \
+				failed=$$((failed + 1)); \
+				failed_combinations="$$failed_combinations$$ruby:$$gemfile "; \
+				echo "❌ FAILED: Ruby $$ruby + $$gemfile"; \
+			fi; \
+		done; \
+	done; \
+	echo ""; \
+	echo "=============================================="; \
+	if [ $$failed -gt 0 ]; then \
+		echo "Matrix complete: $$failed job(s) failed, $$skipped skipped"; \
+		echo ""; \
+		echo "Failed combinations:"; \
+		for combo in $$failed_combinations; do \
+			ruby=$${combo%%:*}; \
+			gemfile=$${combo#*:}; \
+			echo "  - Ruby $$ruby + $$gemfile"; \
+		done; \
+		echo ""; \
+		echo "=============================================="; \
+		echo "Re-running failed combinations with full output..."; \
+		echo "=============================================="; \
+		for combo in $$failed_combinations; do \
+			ruby=$${combo%%:*}; \
+			gemfile=$${combo#*:}; \
+			echo ""; \
+			echo "##############################################"; \
+			echo "# DEBUGGING: Ruby $$ruby + $$gemfile"; \
+			echo "##############################################"; \
 			docker run --rm \
 				--network activejob-uniqueness_default \
 				-e REDIS_URL=redis://redis:6379 \
@@ -81,16 +140,12 @@ spec-matrix: up build-all
 				-v $(PWD):/app \
 				-w /app \
 				activejob-uniqueness:ruby-$$ruby \
-				sh -c "bundle install --quiet && bundle exec rake" || failed=$$((failed + 1)); \
+				sh -c "bundle install && bundle exec rspec --format documentation" || true; \
+			echo ""; \
 		done; \
-	done; \
-	echo ""; \
-	echo "=============================================="; \
-	if [ $$failed -gt 0 ]; then \
-		echo "Matrix complete: $$failed job(s) failed"; \
 		exit 1; \
 	else \
-		echo "Matrix complete: all jobs passed!"; \
+		echo "Matrix complete: all jobs passed! ($$skipped skipped)"; \
 	fi
 
 # Open a Ruby console (IRB) in the container

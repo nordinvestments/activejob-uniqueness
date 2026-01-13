@@ -8,8 +8,10 @@ AllCops:
   NewCops: enable
   Exclude:
     - gemfiles/**/*
-    - activejob-uniqueness.gemspec
-    - activejob-uniqueness-2026.gemspec
+
+Naming/FileName:
+  Exclude:
+    - lib/activejob-unique.rb
 
 RSpec/PredicateMatcher:
   Enabled: false

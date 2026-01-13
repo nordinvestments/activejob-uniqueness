@@ -5,9 +5,9 @@ $LOAD_PATH.unshift(lib) unless $LOAD_PATH.include?(lib)
 require 'active_job/uniqueness/version'
 
 Gem::Specification.new do |spec|
-  spec.name          = 'activejob-uniqueness-2026'
+  spec.name          = 'activejob-unique'
   spec.version       = ActiveJob::Uniqueness::VERSION
-  spec.authors       = ['Rustam Sharshenov', 'Nord Investments']
+  spec.authors       = ['Rustam Sharshenov', 'Nicolai Seerup', 'Iaroslav Kurbatov']
   spec.email         = ['nse@norminvest.com']
 
   spec.summary       = 'Ensure uniqueness of your ActiveJob jobs'
@@ -28,7 +28,7 @@ Gem::Specification.new do |spec|
 
   spec.required_ruby_version = '>= 3.1'
 
-  spec.add_dependency 'activejob', '>= 7.1', '< 7.3'
+  spec.add_dependency 'activejob', '>= 7.1', '< 8.2'
   spec.add_dependency 'redlock', '>= 2.0', '< 3'
 
   spec.add_development_dependency 'appraisal', '~> 2.3.0'

@@ -2,9 +2,9 @@
 
 > **Maintained fork of [veeqo/activejob-uniqueness](https://github.com/veeqo/activejob-uniqueness)**
 >
-> This gem is published as `activejob-uniqueness-2026` on RubyGems. The API is fully compatible with the original gem — just update your Gemfile.
+> This gem is published as `activejob-unique` on RubyGems. The API is fully compatible with the original gem — just update your Gemfile.
 
-[![Build Status](https://github.com/nordinvestments/activejob-uniqueness/actions/workflows/main.yml/badge.svg?branch=main)](https://github.com/nordinvestments/activejob-uniqueness/actions/workflows/main.yml) [![Gem Version](https://badge.fury.io/rb/activejob-uniqueness-2026.svg)](https://badge.fury.io/rb/activejob-uniqueness-2026)
+[![Build Status](https://github.com/nordinvestments/activejob-uniqueness/actions/workflows/main.yml/badge.svg?branch=main)](https://github.com/nordinvestments/activejob-uniqueness/actions/workflows/main.yml) [![Gem Version](https://badge.fury.io/rb/activejob-unique.svg)](https://badge.fury.io/rb/activejob-unique)
 
 ## Requirements
 
@@ -38,15 +38,15 @@ Inspired by [SidekiqUniqueJobs](https://github.com/mhenrixon/sidekiq-unique-jobs
 
 ## Installation
 
-Add the `activejob-uniqueness-2026` gem to your Gemfile.
+Add the `activejob-unique` gem to your Gemfile.
 
 ```ruby
-gem 'activejob-uniqueness-2026'
+gem 'activejob-unique'
 ```
 
 If you want jobs unlocking for Sidekiq Web UI, require the patch explicitly. [**Queues cleanup becomes slower!**](#sidekiq-api-support)
 ```ruby
-gem 'activejob-uniqueness-2026', require: 'active_job/uniqueness/sidekiq_patch'
+gem 'activejob-unique', require: 'active_job/uniqueness/sidekiq_patch'
 ```
 
 And run `bundle install` command.
@@ -60,7 +60,7 @@ If you're switching from the original gem, simply replace in your Gemfile:
 gem 'activejob-uniqueness'
 
 # After
-gem 'activejob-uniqueness-2026'
+gem 'activejob-unique'
 ```
 
 No code changes required — the `ActiveJob::Uniqueness` module namespace is unchanged.
@@ -241,7 +241,7 @@ ActiveJob::Uniqueness supports Sidekiq API to unset job locks on queues cleanup 
 Take into account that **[big queues cleanup becomes much slower](https://github.com/nordinvestments/activejob-uniqueness/issues/16)** because each job is being unlocked individually. In order to activate Sidekiq API patch require it explicitly in your Gemfile:
 
 ```ruby
-gem 'activejob-uniqueness-2026', require: 'active_job/uniqueness/sidekiq_patch'
+gem 'activejob-unique', require: 'active_job/uniqueness/sidekiq_patch'
 ```
 
 ## Why this fork?

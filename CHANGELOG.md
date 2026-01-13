@@ -8,7 +8,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ## [0.5.0](https://github.com/nordinvestments/activejob-uniqueness/compare/v0.4.0...v0.5.0) - 2026-01-12
 
 ### Changed
-- Fork published as `activejob-uniqueness-2026` gem by [@nordinvestments](https://github.com/nordinvestments)
+- Fork published as `activejob-unique` gem by [@nordinvestments](https://github.com/nordinvestments)
 - Updated gem metadata to point to fork repository
 
 ---
