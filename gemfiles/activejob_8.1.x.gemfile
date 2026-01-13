@@ -4,4 +4,4 @@ source "https://rubygems.org"
 
 gem "activejob", "~> 8.1"
 
-gemspec path: "../", name: "activejob-uniqueness-2026"
+gemspec path: "../"

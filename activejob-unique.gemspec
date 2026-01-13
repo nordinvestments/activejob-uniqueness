@@ -5,7 +5,7 @@ $LOAD_PATH.unshift(lib) unless $LOAD_PATH.include?(lib)
 require 'active_job/uniqueness/version'
 
 Gem::Specification.new do |spec|
-  spec.name          = 'activejob-uniqueness-2026'
+  spec.name          = 'activejob-unique'
   spec.version       = ActiveJob::Uniqueness::VERSION
   spec.authors       = ['Rustam Sharshenov', 'Nicolai Seerup', 'Yaroslav Kurbatov']
   spec.email         = ['nse@norminvest.com']

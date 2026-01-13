@@ -9,7 +9,7 @@ AllCops:
   Exclude:
     - gemfiles/**/*
     - activejob-uniqueness.gemspec
-    - activejob-uniqueness-2026.gemspec
+    - activejob-unique.gemspec
 
 RSpec/PredicateMatcher:
   Enabled: false

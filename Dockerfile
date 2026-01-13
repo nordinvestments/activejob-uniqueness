@@ -13,7 +13,7 @@ RUN apt-get update -qq && \
 WORKDIR /app
 
 # Copy gemspec and Gemfile first for better layer caching
-COPY activejob-uniqueness-2026.gemspec Gemfile ./
+COPY activejob-unique.gemspec Gemfile ./
 COPY lib/active_job/uniqueness/version.rb ./lib/active_job/uniqueness/version.rb
 
 # Install bundler and gems (don't use lock file to allow flexibility across Ruby versions)
