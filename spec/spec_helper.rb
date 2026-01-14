@@ -3,6 +3,7 @@
 require 'bundler/setup'
 require 'logger' # Fix concurrent-ruby removing logger dependency which Rails itself does not have
 require 'active_support/core_ext/kernel/reporting'
+require 'redis-client'
 
 begin
   require 'sidekiq/api'
