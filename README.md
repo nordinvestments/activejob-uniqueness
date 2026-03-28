@@ -11,7 +11,7 @@
 | Dependency | Version |
 |------------|---------|
 | Ruby | >= 3.1 |
-| Rails (ActiveJob) | >= 7.1, < 7.3 |
+| Rails (ActiveJob) | >= 7.1, < 8.2 |
 | Redis | >= 2.8 |
 
 > **Note:** This fork targets modern Ruby and Rails versions. For older Ruby (2.5-3.0) or Rails (4.2-7.0) support, use the [original gem](https://github.com/veeqo/activejob-uniqueness).
