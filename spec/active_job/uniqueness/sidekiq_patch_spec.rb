@@ -57,6 +57,20 @@ describe 'Sidekiq patch', :sidekiq, type: :integration do
     end
   end
 
+  shared_examples_for 'locks preserved when moved' do
+    it 'preserves the lock' do
+      expect { move_job }.not_to change { locks(job_class_name: activejob_worker.name).count }.from(1)
+    end
+
+    it 'prevents a duplicate enqueue' do
+      move_job
+
+      expect do
+        activejob_worker.perform_later(:lock_argument, :ignored_argument)
+      end.to raise_error(ActiveJob::Uniqueness::JobNotUnique)
+    end
+  end
+
   describe 'scheduled set item delete' do
     subject { Sidekiq::ScheduledSet.new.each(&:delete) }
 
@@ -90,17 +104,7 @@ describe 'Sidekiq patch', :sidekiq, type: :integration do
       end
     end
 
-    it 'preserves the lock' do
-      expect { move_job }.not_to change { locks(job_class_name: activejob_worker.name).count }.from(1)
-    end
-
-    it 'prevents a duplicate enqueue' do
-      move_job
-
-      expect do
-        activejob_worker.perform_later(:lock_argument, :ignored_argument)
-      end.to raise_error(ActiveJob::Uniqueness::JobNotUnique)
-    end
+    include_examples 'locks preserved when moved'
   end
 
   describe 'retry set item retry', active_job_adapter: :sidekiq do
@@ -114,7 +118,6 @@ describe 'Sidekiq patch', :sidekiq, type: :integration do
 
       scheduled_entry = Sidekiq::ScheduledSet.new.first
       Sidekiq::RetrySet.new.schedule(3.minutes.from_now, scheduled_entry.item.merge('retry_count' => 1))
-      Sidekiq.redis { |connection| connection.zrem('schedule', scheduled_entry.value) }
     end
 
     after do
@@ -129,17 +132,7 @@ describe 'Sidekiq patch', :sidekiq, type: :integration do
       end
     end
 
-    it 'preserves the lock' do
-      expect { move_job }.not_to change { locks(job_class_name: activejob_worker.name).count }.from(1)
-    end
-
-    it 'prevents a duplicate enqueue' do
-      move_job
-
-      expect do
-        activejob_worker.perform_later(:lock_argument, :ignored_argument)
-      end.to raise_error(ActiveJob::Uniqueness::JobNotUnique)
-    end
+    include_examples 'locks preserved when moved'
   end
 
   describe 'scheduled set clear' do
@@ -193,7 +186,8 @@ describe 'Sidekiq patch', :sidekiq, type: :integration do
     end
 
     after do
-      Sidekiq.redis { |connection| connection.del("queue:#{queue.name}") }
+      stub_const(activejob_worker.name, activejob_worker)
+      queue.clear
       ActiveJob::Uniqueness.unlock!(
         job_class_name: activejob_worker.name,
         arguments: %i[lock_argument ignored_argument]

@@ -28,6 +28,8 @@ module ActiveJob
 
     def self.deserialize_sidekiq_job(job_data)
       serialized_job = job_data.fetch('args').first
+
+      # ActiveJob only wraps a missing job class in UnknownJobClassError as of version 8.1
       return unless serialized_job.fetch('job_class').safe_constantize
 
       ActiveJob::Base.deserialize(serialized_job)
