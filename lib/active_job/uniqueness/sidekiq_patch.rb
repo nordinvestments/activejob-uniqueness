@@ -22,7 +22,7 @@ module ActiveJob
       rescue ActiveJob::DeserializationError
         # Most probably, GlobalID fails to locate AR record (record is deleted)
       else
-        ActiveJob::Uniqueness.unlock!(job_class_name: job.class.name, arguments: job.arguments)
+        ActiveJob::Uniqueness.unlock!(job_class_name: job.class.name, arguments: job.lock_key_arguments)
       end
     end
 

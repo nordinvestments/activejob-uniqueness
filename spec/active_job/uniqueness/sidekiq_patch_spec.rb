@@ -19,6 +19,22 @@ describe 'Sidekiq patch', :sidekiq, type: :integration do
         end
       end
 
+      context 'when job class has custom lock key arguments' do
+        let!(:activejob_worker) do
+          stub_active_job_class do
+            unique :until_executed
+
+            def lock_key_arguments
+              [arguments.first]
+            end
+          end
+        end
+
+        it 'releases the lock' do
+          expect { subject }.to change { locks(job_class_name: activejob_worker.name).count }.by(-1)
+        end
+      end
+
       context 'when job class has no unique strategy enabled' do
         let!(:activejob_worker) do
           stub_active_job_class
@@ -47,7 +63,7 @@ describe 'Sidekiq patch', :sidekiq, type: :integration do
     before do
       Sidekiq::ScheduledSet.new.clear
       sidekiq_worker.perform_in(3.minutes, 123)
-      activejob_worker.set(wait: 3.minutes).perform_later(321)
+      activejob_worker.set(wait: 3.minutes).perform_later(:lock_argument, :ignored_argument)
     end
 
     include_examples 'locks release'
@@ -59,7 +75,7 @@ describe 'Sidekiq patch', :sidekiq, type: :integration do
     before do
       Sidekiq::ScheduledSet.new.clear
       sidekiq_worker.perform_in(3.minutes, 123)
-      activejob_worker.set(wait: 3.minutes).perform_later(321)
+      activejob_worker.set(wait: 3.minutes).perform_later(:lock_argument, :ignored_argument)
     end
 
     include_examples 'locks release'
@@ -71,7 +87,7 @@ describe 'Sidekiq patch', :sidekiq, type: :integration do
     before do
       Sidekiq::ScheduledSet.new.clear
       sidekiq_worker.perform_in(3.minutes, 123)
-      activejob_worker.set(wait: 3.minutes).perform_later(321)
+      activejob_worker.set(wait: 3.minutes).perform_later(:lock_argument, :ignored_argument)
     end
 
     include_examples 'locks release'
@@ -83,7 +99,7 @@ describe 'Sidekiq patch', :sidekiq, type: :integration do
     before do
       Sidekiq::Queue.new('default').clear
       sidekiq_worker.perform_async(123)
-      activejob_worker.perform_later(321)
+      activejob_worker.perform_later(:lock_argument, :ignored_argument)
     end
 
     include_examples 'locks release'
@@ -95,7 +111,7 @@ describe 'Sidekiq patch', :sidekiq, type: :integration do
     before do
       Sidekiq::Queue.new('default').clear
       sidekiq_worker.perform_async(123)
-      activejob_worker.perform_later(321)
+      activejob_worker.perform_later(:lock_argument, :ignored_argument)
     end
 
     include_examples 'locks release'
@@ -107,7 +123,7 @@ describe 'Sidekiq patch', :sidekiq, type: :integration do
     before do
       Sidekiq::JobSet.new('schedule').clear
       sidekiq_worker.perform_in(3.minutes, 123)
-      activejob_worker.set(wait: 3.minutes).perform_later(321)
+      activejob_worker.set(wait: 3.minutes).perform_later(:lock_argument, :ignored_argument)
     end
 
     include_examples 'locks release'
@@ -123,7 +139,7 @@ describe 'Sidekiq patch', :sidekiq, type: :integration do
     before do
       Sidekiq::Queue.new('default').clear
       sidekiq_worker.perform_async(123)
-      activejob_worker.perform_later(321)
+      activejob_worker.perform_later(:lock_argument, :ignored_argument)
     end
 
     include_examples 'locks release'
