@@ -11,8 +11,11 @@
 | Dependency | Version |
 |------------|---------|
 | Ruby | >= 3.1 |
-| Rails (ActiveJob) | >= 7.1, < 7.3 |
+| Rails (ActiveJob) | >= 7.1, < 8.2 |
+| Sidekiq (optional) | 6.x - 8.x (CI-tested) |
 | Redis | >= 2.8 |
+
+> **Note:** ActiveJob 8.1 and Sidekiq 8 require Ruby >= 3.2.
 
 > **Note:** This fork targets modern Ruby and Rails versions. For older Ruby (2.5-3.0) or Rails (4.2-7.0) support, use the [original gem](https://github.com/veeqo/activejob-uniqueness).
 
