@@ -6,6 +6,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ## [Unreleased](https://github.com/nordinvestments/activejob-uniqueness/compare/v0.5.0...HEAD)
 
 ### Fixed
+- [#7](https://github.com/nordinvestments/activejob-uniqueness/issues/7) `TestLockManager` now stubs the full public API of `LockManager` so `test_mode!` no longer raises `NoMethodError` for methods like `locked?`, `unlock`, `lock!`, `valid_lock?` or the TTL lookups
 - Release the correct lock when Sidekiq deletes a job with custom lock key arguments
 - Allow Sidekiq to delete jobs whose ActiveJob class no longer exists
 - Preserve uniqueness locks when Sidekiq moves jobs between sets and queues
