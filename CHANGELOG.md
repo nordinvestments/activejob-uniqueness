@@ -5,6 +5,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## [Unreleased](https://github.com/nordinvestments/activejob-uniqueness/compare/v0.5.0...HEAD)
 
+### Fixed
+- Release the correct lock when Sidekiq deletes a job with custom lock key arguments
+- Allow Sidekiq to delete jobs whose ActiveJob class no longer exists
+- Preserve uniqueness locks when Sidekiq moves jobs between sets and queues
+
 ## [0.5.0](https://github.com/nordinvestments/activejob-uniqueness/compare/v0.4.0...v0.5.0) - 2026-01-12
 
 ### Added

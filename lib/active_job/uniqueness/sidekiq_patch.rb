@@ -13,33 +13,34 @@ module ActiveJob
     def self.unlock_sidekiq_job!(job_data)
       return unless SIDEKIQ_JOB_WRAPPERS.include?(job_data['class'])
 
-      job = ActiveJob::Base.deserialize(job_data.fetch('args').first)
+      job = deserialize_sidekiq_job(job_data)
 
-      return unless job.class.lock_strategy_class
+      return unless job&.class&.lock_strategy_class
 
       begin
         job.send(:deserialize_arguments_if_needed)
       rescue ActiveJob::DeserializationError
         # Most probably, GlobalID fails to locate AR record (record is deleted)
       else
-        ActiveJob::Uniqueness.unlock!(job_class_name: job.class.name, arguments: job.arguments)
+        ActiveJob::Uniqueness.unlock!(job_class_name: job.class.name, arguments: job.lock_key_arguments)
       end
     end
+
+    def self.deserialize_sidekiq_job(job_data)
+      serialized_job = job_data.fetch('args').first
+
+      # ActiveJob only wraps a missing job class in UnknownJobClassError as of version 8.1
+      return unless serialized_job.fetch('job_class').safe_constantize
+
+      ActiveJob::Base.deserialize(serialized_job)
+    end
+    private_class_method :deserialize_sidekiq_job
 
     module SidekiqPatch
       module SortedEntry
         def delete
           ActiveJob::Uniqueness.unlock_sidekiq_job!(item) if super
           item
-        end
-
-        private
-
-        def remove_job
-          super do |message|
-            ActiveJob::Uniqueness.unlock_sidekiq_job!(Sidekiq.load_json(message))
-            yield message
-          end
         end
       end
 
