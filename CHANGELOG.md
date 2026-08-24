@@ -7,9 +7,16 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## [0.5.0](https://github.com/nordinvestments/activejob-uniqueness/compare/v0.4.0...v0.5.0) - 2026-01-12
 
+### Added
+- [#4](https://github.com/nordinvestments/activejob-uniqueness/pull/4) Support for Rails 8.1 (ActiveJob `>= 7.1, < 8.2`) and Sidekiq 8
+- CI coverage for ActiveJob 8.1 and Sidekiq 8 (`gemfiles/activejob_8.1.x.gemfile`, `gemfiles/sidekiq_8.x.gemfile`)
+
 ### Changed
 - Fork published as `activejob-unique` gem by [@nordinvestments](https://github.com/nordinvestments)
 - Updated gem metadata to point to fork repository
+- Replaced the deprecated `ActiveSupport::Configurable` in `ActiveJob::Uniqueness::Configuration`
+  with `class_attribute`, required for ActiveSupport 8.1 compatibility
+- Minimum Ruby raised to 3.1 (ActiveJob 8.1 and Sidekiq 8 require Ruby >= 3.2)
 
 ---
 
