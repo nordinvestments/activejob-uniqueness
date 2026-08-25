@@ -7,7 +7,7 @@ RUBY_VERSION ?= 3.3
 RUBY_VERSIONS := 3.1 3.2 3.3 3.4 4.0
 
 # Gemfiles to test (matching CI matrix)
-GEMFILES := gemfiles/activejob_7.1.x.gemfile gemfiles/activejob_7.2.x.gemfile gemfiles/activejob_8.1.x.gemfile gemfiles/sidekiq_6.x.gemfile gemfiles/sidekiq_7.x.gemfile gemfiles/sidekiq_8.x.gemfile
+GEMFILES := gemfiles/activejob_7.1.x.gemfile gemfiles/activejob_7.2.x.gemfile gemfiles/activejob_8.0.x.gemfile gemfiles/activejob_8.1.x.gemfile gemfiles/sidekiq_6.x.gemfile gemfiles/sidekiq_7.x.gemfile gemfiles/sidekiq_8.x.gemfile
 
 # Build the Docker image for a specific Ruby version
 # Usage: make build RUBY_VERSION=3.3
@@ -55,6 +55,9 @@ spec-all: up
 	@echo "Running specs with ActiveJob 7.2.x..."
 	docker compose run --rm -e BUNDLE_GEMFILE=gemfiles/activejob_7.2.x.gemfile specs-appraisal || true
 	@echo ""
+	@echo "Running specs with ActiveJob 8.0.x..."
+	docker compose run --rm -e BUNDLE_GEMFILE=gemfiles/activejob_8.0.x.gemfile specs-appraisal || true
+	@echo ""
 	@echo "Running specs with ActiveJob 8.1.x..."
 	docker compose run --rm -e BUNDLE_GEMFILE=gemfiles/activejob_8.1.x.gemfile specs-appraisal || true
 	@echo ""
@@ -79,6 +82,9 @@ spec-matrix: up build-all
 	for ruby in $(RUBY_VERSIONS); do \
 		for gemfile in $(GEMFILES); do \
 			skip=0; \
+			if [ "$$ruby" = "3.1" ] && [ "$$gemfile" = "gemfiles/activejob_8.0.x.gemfile" ]; then \
+				skip=1; \
+			fi; \
 			if [ "$$ruby" = "3.1" ] && [ "$$gemfile" = "gemfiles/activejob_8.1.x.gemfile" ]; then \
 				skip=1; \
 			fi; \
