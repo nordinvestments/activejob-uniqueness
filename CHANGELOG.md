@@ -3,15 +3,20 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
-## [Unreleased](https://github.com/nordinvestments/activejob-uniqueness/compare/v0.5.0...HEAD)
+## [Unreleased](https://github.com/nordinvestments/activejob-uniqueness/compare/v0.5.1...HEAD)
+
+## [0.5.1](https://github.com/nordinvestments/activejob-uniqueness/compare/v0.5.0...v0.5.1) - 2026-08-25
 
 ### Fixed
-- [#7](https://github.com/nordinvestments/activejob-uniqueness/issues/7) `TestLockManager` now stubs the full public API of `LockManager` so `test_mode!` no longer raises `NoMethodError` for methods like `locked?`, `unlock`, `lock!`, `valid_lock?` or the TTL lookups
+- [#11](https://github.com/nordinvestments/activejob-uniqueness/pull/11) `TestLockManager` now stubs the full public API of `LockManager` so `test_mode!` no longer raises `NoMethodError` for methods like `locked?`, `unlock`, `lock!`, `valid_lock?` or the TTL lookups ([#7](https://github.com/nordinvestments/activejob-uniqueness/issues/7))
 - Release the correct lock when Sidekiq deletes a job with custom lock key arguments
 - Allow Sidekiq to delete jobs whose ActiveJob class no longer exists
 - Preserve uniqueness locks when Sidekiq moves jobs between sets and queues
-- Release the lock for jobs that override `#lock_key` when deleted via the Sidekiq API, instead of a class + arguments wildcard that never matches a custom key
-- Only release enqueue locks during Sidekiq queue/set cleanup: the runtime lock of an `:until_and_while_executing` job and the `:while_executing` guard (which is not an enqueue lock) are left untouched, so removing a queued duplicate can no longer free the guard of an instance that is currently executing
+- [#10](https://github.com/nordinvestments/activejob-uniqueness/pull/10) Release the lock for jobs that override `#lock_key` when deleted via the Sidekiq API, instead of a class + arguments wildcard that never matches a custom key
+- [#10](https://github.com/nordinvestments/activejob-uniqueness/pull/10) Only release enqueue locks during Sidekiq queue/set cleanup: the runtime lock of an `:until_and_while_executing` job and the `:while_executing` guard (which is not an enqueue lock) are left untouched, so removing a queued duplicate can no longer free the guard of an instance that is currently executing
+
+### Changed
+- Added `gemfiles/activejob_8.0.x.gemfile` to the CI matrix, so ActiveJob 8.0 (allowed by the gemspec) is now exercised
 
 ## [0.5.0](https://github.com/nordinvestments/activejob-uniqueness/compare/v0.4.0...v0.5.0) - 2026-01-12
 
@@ -24,7 +29,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Updated gem metadata to point to fork repository
 - Replaced the deprecated `ActiveSupport::Configurable` in `ActiveJob::Uniqueness::Configuration`
   with `class_attribute`, required for ActiveSupport 8.1 compatibility
-- Minimum Ruby raised to 3.1 (ActiveJob 8.1 and Sidekiq 8 require Ruby >= 3.2)
+- Minimum supported Ruby raised to 3.1
+- ActiveJob 8.1 and Sidekiq 8 require Ruby >= 3.2, encoded as `exclude:` entries in the CI matrix
 
 ---
 
