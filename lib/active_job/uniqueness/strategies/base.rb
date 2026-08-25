@@ -13,6 +13,18 @@ module ActiveJob
 
         attr_reader :lock_key, :lock_ttl, :on_conflict, :on_redis_connection_error, :job
 
+        # Whether the strategy acquires its #lock_key at enqueue time.
+        #
+        # Sidekiq queue/set cleanup only releases enqueue locks, so a strategy
+        # whose #lock_key is instead a runtime guard (e.g. :while_executing) must
+        # report false to avoid freeing the guard of a currently executing
+        # instance. Built-in enqueue-locking strategies signal this by including
+        # LockingOnEnqueue; a custom strategy that locks on enqueue by other means
+        # can override this method to return true.
+        def self.locks_on_enqueue?
+          include?(LockingOnEnqueue)
+        end
+
         def initialize(job:)
           @lock_key = job.lock_key
           @lock_ttl = (job.lock_options[:lock_ttl] || config.lock_ttl).to_i * 1000 # ms
