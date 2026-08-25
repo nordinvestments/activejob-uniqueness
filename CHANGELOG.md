@@ -10,6 +10,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Release the correct lock when Sidekiq deletes a job with custom lock key arguments
 - Allow Sidekiq to delete jobs whose ActiveJob class no longer exists
 - Preserve uniqueness locks when Sidekiq moves jobs between sets and queues
+- Release the lock for jobs that override `#lock_key` when deleted via the Sidekiq API, instead of a class + arguments wildcard that never matches a custom key
+- Only release enqueue locks during Sidekiq queue/set cleanup: the runtime lock of an `:until_and_while_executing` job and the `:while_executing` guard (which is not an enqueue lock) are left untouched, so removing a queued duplicate can no longer free the guard of an instance that is currently executing
 
 ## [0.5.0](https://github.com/nordinvestments/activejob-uniqueness/compare/v0.4.0...v0.5.0) - 2026-01-12
 

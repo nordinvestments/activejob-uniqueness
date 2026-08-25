@@ -16,15 +16,23 @@ module ActiveJob
       job = deserialize_sidekiq_job(job_data)
 
       return unless job&.class&.lock_strategy_class
+      return unless locks_on_enqueue?(job)
 
-      begin
-        job.send(:deserialize_arguments_if_needed)
-      rescue ActiveJob::DeserializationError
-        # Most probably, GlobalID fails to locate AR record (record is deleted)
-      else
-        ActiveJob::Uniqueness.unlock!(job_class_name: job.class.name, arguments: job.lock_key_arguments)
-      end
+      lock_key = enqueue_lock_key(job)
+      return unless lock_key
+
+      ActiveJob::Uniqueness.lock_manager.delete_lock(lock_key)
     end
+
+    # Only strategies that lock on enqueue store an enqueue lock under #lock_key.
+    # :while_executing does not lock on enqueue: its #lock_key holds the *runtime*
+    # guard of a currently-executing instance, so cleaning up a queued duplicate
+    # must not touch it. Strategies advertise this via #locks_on_enqueue?, which
+    # custom strategies can override.
+    def self.locks_on_enqueue?(job)
+      job.class.lock_strategy_class.locks_on_enqueue?
+    end
+    private_class_method :locks_on_enqueue?
 
     def self.deserialize_sidekiq_job(job_data)
       serialized_job = job_data.fetch('args').first
@@ -35,6 +43,24 @@ module ActiveJob
       ActiveJob::Base.deserialize(serialized_job)
     end
     private_class_method :deserialize_sidekiq_job
+
+    # Returns the enqueue lock key to release, or nil when it cannot be rebuilt.
+    #
+    # The key is rebuilt from the job's own #lock_key, so custom overrides are
+    # honored (a class + arguments wildcard never matched them). ActiveJob does
+    # not deserialize arguments until asked, so we trigger it explicitly: if a
+    # referenced record no longer exists (e.g. a deleted GlobalID) it raises
+    # DeserializationError and we skip the unlock, letting the lock expire by its
+    # TTL. Rebuilding a key from an incomplete argument list and deleting it could
+    # free another job's live lock, so skipping is the safe choice. Any other
+    # error is a genuine bug (e.g. in a custom #lock_key) and is left to surface.
+    def self.enqueue_lock_key(job)
+      job.send(:deserialize_arguments_if_needed)
+      job.lock_key
+    rescue ActiveJob::DeserializationError
+      nil
+    end
+    private_class_method :enqueue_lock_key
 
     module SidekiqPatch
       module SortedEntry
